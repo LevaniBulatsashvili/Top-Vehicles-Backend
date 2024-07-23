@@ -1,5 +1,6 @@
 import bodyParser from "body-parser";
 import express from "express";
+import usersRouter from "./routes/users";
 
 const app = express();
 app.use(bodyParser.json());
@@ -12,6 +13,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use("/users", usersRouter);
 app.use((req, res) => res.status(404).json({ message: "404 - Not Found" }));
 
 app.listen(5000, () => console.log("Server has started on port 5000"));
