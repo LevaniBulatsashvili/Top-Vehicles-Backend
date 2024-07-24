@@ -22,7 +22,7 @@ export async function getVehicle(
     const { vehicleId } = req.params;
     const userId = req.body.userId;
 
-    const vehicle: Vehicle = (
+    const vehicle: Vehicle | undefined = (
       await db.query(`SELECT * FROM vehicles WHERE id = ${vehicleId}`)
     ).rows[0];
 
