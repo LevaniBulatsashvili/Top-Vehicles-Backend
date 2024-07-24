@@ -2,6 +2,7 @@ import { type Response, type Request } from "express";
 import db from "../db";
 import type Like from "../types/Likes";
 import type Vehicle from "../types/Vehicle";
+import handleHttpErrors from "../util/handleHttpErrors";
 
 export async function getVehicles(req: Request, res: Response<Vehicle[]>) {
   try {
@@ -9,7 +10,7 @@ export async function getVehicles(req: Request, res: Response<Vehicle[]>) {
 
     res.status(200).json(vehicles);
   } catch (err) {
-    console.log(err);
+    handleHttpErrors(res, err);
   }
 }
 
@@ -25,22 +26,23 @@ export async function getVehicle(
       await db.query(`SELECT * FROM vehicles WHERE id = ${vehicleId}`)
     ).rows[0];
 
-    if (userId) {
+    if (vehicle && userId) {
       const vehicleViewed = (
         await db.query(
           `SELECT * FROM vehicle_views WHERE user_id = ${userId} AND vehicle_id = ${vehicleId}`
         )
       ).rowCount;
 
-      if (!vehicleViewed)
+      if (!vehicleViewed) {
         await db.query(
           `INSERT INTO vehicle_views (user_id, vehicle_id) VALUES($1, $2)`,
           [userId, vehicleId]
         );
+      }
     }
     res.status(200).json(vehicle);
   } catch (err) {
-    console.log(err);
+    handleHttpErrors(res, err);
   }
 }
 
@@ -56,7 +58,7 @@ export async function searchVehicles(
 
     res.status(200).json(vehicles);
   } catch (err) {
-    console.log(err);
+    handleHttpErrors(res, err);
   }
 }
 
@@ -73,7 +75,7 @@ export async function postVehicle(
 
     res.status(200).json({ message: "success" });
   } catch (err) {
-    console.log(err);
+    handleHttpErrors(res, err);
   }
 }
 
@@ -99,7 +101,7 @@ export async function likeVehicle(req: Request<{}, {}, Like>, res: Response) {
 
     res.status(200).json({ message: "success" });
   } catch (err) {
-    console.log(err);
+    handleHttpErrors(res, err);
   }
 }
 
@@ -125,6 +127,6 @@ export async function updateVehicle(
 
     res.status(200).json({ message: "success" });
   } catch (err) {
-    console.log(err);
+    handleHttpErrors(res, err);
   }
 }
