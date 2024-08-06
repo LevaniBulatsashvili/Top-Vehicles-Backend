@@ -69,11 +69,11 @@ export async function postVehicle(
   res: Response<Vehicle>
 ) {
   try {
-    const { userId, title, description, loc, price, img } = req.body;
+    const { user_id, title, description, loc, price, img } = req.body;
     const vehicle: Vehicle = (
       await db.query(
         `INSERT INTO vehicles (user_id, title, description, loc, price, img) VALUES($1, $2, $3, $4, $5, $6) RETURNING *`,
-        [userId, title, description, loc, price, img]
+        [user_id, title, description, loc, price, img]
       )
     ).rows[0];
 
@@ -115,7 +115,7 @@ export async function updateVehicle(
 ) {
   try {
     const { id } = req.params;
-    const { userId, title, description, loc, price, img } = req.body;
+    const { user_id, title, description, loc, price, img } = req.body;
 
     const vehicle: Vehicle = (
       await db.query(
@@ -130,7 +130,7 @@ export async function updateVehicle(
       WHERE id = $7
       RETURNING *
     `,
-        [userId, title, description, loc, price, img, id]
+        [user_id, title, description, loc, price, img, id]
       )
     ).rows[0];
 

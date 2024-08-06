@@ -3,7 +3,7 @@ import type Views from "./Views";
 
 type Vehicle = {
   id: number;
-  userId: number;
+  user_id: number;
   title: string;
   description: string;
   loc: string;
