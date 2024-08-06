@@ -17,6 +17,7 @@ export default function handleHttpErrors(res: Response, error: unknown) {
       return response(res, 422, "Request contains wrong data types.");
     if (err.includes('unique constraint "users_email_key"'))
       return response(res, 422, "Email already exists.");
+    console.log(err)
   }
   res
     .status(500)

@@ -40,7 +40,9 @@ export async function getVehicle(
         );
       }
     }
-    res.status(200).json(vehicle);
+
+    if (vehicle) res.status(200).json(vehicle);
+    else res.status(404);
   } catch (err) {
     handleHttpErrors(res, err);
   }
@@ -64,16 +66,18 @@ export async function searchVehicles(
 
 export async function postVehicle(
   req: Request<{}, {}, Vehicle>,
-  res: Response
+  res: Response<Vehicle>
 ) {
   try {
-    const { title, loc, price, img } = req.body;
-    await db.query(
-      `INSERT INTO vehicles (title, loc, price, img) VALUES($1, $2, $3, $4)`,
-      [title, loc, price, img]
-    );
+    const { userId, title, description, loc, price, img } = req.body;
+    const vehicle: Vehicle = (
+      await db.query(
+        `INSERT INTO vehicles (user_id, title, description, loc, price, img) VALUES($1, $2, $3, $4, $5, $6) RETURNING *`,
+        [userId, title, description, loc, price, img]
+      )
+    ).rows[0];
 
-    res.status(200).json({ message: "success" });
+    res.status(201).json(vehicle);
   } catch (err) {
     handleHttpErrors(res, err);
   }
@@ -107,25 +111,30 @@ export async function likeVehicle(req: Request<{}, {}, Like>, res: Response) {
 
 export async function updateVehicle(
   req: Request<{ id: string }, {}, Vehicle>,
-  res: Response
+  res: Response<Vehicle>
 ) {
   try {
     const { id } = req.params;
-    const { title, loc, price, img } = req.body;
+    const { userId, title, description, loc, price, img } = req.body;
 
-    await db.query(
-      `
+    const vehicle: Vehicle = (
+      await db.query(
+        `
       UPDATE vehicles SET 
-        title = $1,
-        loc = $2,
-        price = $3,
-        img = $4
-      WHERE id = $5
+        user_id = $1,
+        title = $2,
+        description = $3,
+        loc = $4,
+        price = $5,
+        img = $6
+      WHERE id = $7
+      RETURNING *
     `,
-      [title, loc, price, img, id]
-    );
+        [userId, title, description, loc, price, img, id]
+      )
+    ).rows[0];
 
-    res.status(200).json({ message: "success" });
+    res.status(200).json(vehicle);
   } catch (err) {
     handleHttpErrors(res, err);
   }
