@@ -28,7 +28,11 @@ export async function registerUser(req: Request<{}, {}, User>, res: Response) {
       hashPassword(password),
     ]);
 
-    res.status(200).json({ message: "success" });
+    const user: User = await (
+      await db.query(`SELECT * FROM users WHERE email = '${email}'`)
+    ).rows[0];
+
+    res.status(200).json({ id: user.id, email: user.email });
   } catch (err) {
     handleHttpErrors(res, err);
   }

@@ -6,6 +6,7 @@ import {
   updateVehicle,
   likeVehicle,
   searchVehicles,
+  deleteVehicle,
 } from "../handlers/vehicles";
 
 const vehicleRouter = Router();
@@ -21,5 +22,7 @@ vehicleRouter.post("/", postVehicle);
 vehicleRouter.post("/like-vehicle", likeVehicle);
 
 vehicleRouter.put("/:id", updateVehicle);
+
+vehicleRouter.delete("/:id", deleteVehicle);
 
 export default vehicleRouter;

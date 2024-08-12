@@ -139,3 +139,17 @@ export async function updateVehicle(
     handleHttpErrors(res, err);
   }
 }
+
+export async function deleteVehicle(
+  req: Request<{ id: string }, {}, {}>,
+  res: Response
+) {
+  try {
+    const { id } = req.params;
+
+    await db.query(`DELETE FROM vehicles WHERE id = ${id}`);
+    res.status(200).json({ message: "success" });
+  } catch (err) {
+    handleHttpErrors(res, err);
+  }
+}
